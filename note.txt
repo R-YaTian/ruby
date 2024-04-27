@@ -1,0 +1,3 @@
+./configure --cache-file=config.ini --prefix=/mingw32 --disable-install-doc --disable-install-rdoc --disable-install-capi --with-compress-debug-sections=type --without-gmp --with-out-ext=openssl --with-out-ext=pty --with-out-ext=syslog --with-static-linked-ext --with-destdir=D:/msys64
+make -j4 install
+pause
