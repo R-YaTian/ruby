@@ -1,4 +1,4 @@
-autogen.sh
+./autogen.sh
 ./configure --cache-file=config.ini --prefix=/mingw32 --disable-install-doc --disable-install-rdoc --disable-install-capi --with-compress-debug-sections=type --without-gmp --with-out-ext=openssl --with-destdir=../msys64
 make -j4 install
 ./configure --cache-file=config.ini --prefix=/mingw32 --disable-install-doc --disable-install-rdoc --disable-install-capi --with-compress-debug-sections=type --without-gmp --with-out-ext=openssl --with-static-linked-ext --with-destdir=../msys64
