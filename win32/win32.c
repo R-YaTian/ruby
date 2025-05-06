@@ -5674,6 +5674,22 @@ get_ino(HANDLE h, FILE_ID_INFO *id)
     return ERROR_INVALID_PARAMETER;
 }
 
+static BOOL
+_GetFileInformationByHandleEx(HANDLE h, int FileInformationClass, void *id, DWORD dwBufferSize)
+{
+    typedef BOOL (WINAPI *gfibhe_t)(HANDLE, int, void *, DWORD);
+    static gfibhe_t pGetFileInformationByHandleEx = (gfibhe_t)-1;
+
+    if (pGetFileInformationByHandleEx == (gfibhe_t)-1)
+        /* Since Windows Vista and Windows Server 2008 */
+        pGetFileInformationByHandleEx = (gfibhe_t)get_proc_address("kernel32", "GetFileInformationByHandleEx", NULL);
+
+    if (pGetFileInformationByHandleEx) {
+        return pGetFileInformationByHandleEx(h, FileInformationClass, id, dwBufferSize);
+    }
+    return false;
+}
+
 /* License: Ruby's */
 static DWORD
 stati128_handle(HANDLE h, struct stati128 *st)
@@ -5866,7 +5882,7 @@ winnt_stat(const WCHAR *path, struct stati128 *st, BOOL lstat)
         DWORD e;
 
         f = open_special(path, 0, FILE_FLAG_OPEN_REPARSE_POINT);
-        e = GetFileInformationByHandleEx( f, FileAttributeTagInfo,
+        e = _GetFileInformationByHandleEx( f, FileAttributeTagInfo,
                 &attr_info, sizeof(attr_info));
         if (!e || attr_info.ReparseTag != IO_REPARSE_TAG_AF_UNIX) {
             CloseHandle(f);
@@ -5889,7 +5905,7 @@ winnt_stat(const WCHAR *path, struct stati128 *st, BOOL lstat)
                 FILE_ATTRIBUTE_TAG_INFO attr_info;
                 DWORD e;
 
-                e = GetFileInformationByHandleEx( f, FileAttributeTagInfo,
+                e = _GetFileInformationByHandleEx( f, FileAttributeTagInfo,
                         &attr_info, sizeof(attr_info));
                 if (e && attr_info.ReparseTag == IO_REPARSE_TAG_AF_UNIX) {
                     st->st_size = 0;

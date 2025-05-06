@@ -44,10 +44,6 @@
 #include "ruby/encoding.h"
 #include "timev.h"
 
-#if defined(_WIN32)
-# include "timezoneapi.h" /* DYNAMIC_TIME_ZONE_INFORMATION */
-#endif
-
 #include "builtin.h"
 
 static ID id_submicro, id_nano_num, id_nano_den, id_offset, id_zone;
@@ -727,8 +723,8 @@ get_tzname(int dst)
              * Available since Windows Vista and Windows Server 2008.
              */
             DYNAMIC_TIME_ZONE_INFORMATION tzi;
-            WCHAR *const wtzkey = tzi.TimeZoneKeyName;
-            DWORD tzret = GetDynamicTimeZoneInformation(&tzi);
+            WCHAR *const wtzkey = tzi.StandardName;
+            DWORD tzret = GetTimeZoneInformation((LPTIME_ZONE_INFORMATION)&tzi);
             if (tzret != TIME_ZONE_ID_INVALID && *wtzkey) {
                 int wlen = (int)wcsnlen(wtzkey, tzkey_max);
                 int clen = WideCharToMultiByte(CP_UTF8, 0, wtzkey, wlen,

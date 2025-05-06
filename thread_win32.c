@@ -12,6 +12,7 @@
 #ifdef THREAD_SYSTEM_DEPENDENT_IMPLEMENTATION
 
 #include <process.h>
+#include <winternl.h>
 
 #define TIME_QUANTUM_USEC (10 * 1000)
 #define RB_CONDATTR_CLOCK_MONOTONIC 1 /* no effect */
@@ -873,11 +874,30 @@ native_set_thread_name(rb_thread_t *th)
 {
 }
 
+typedef struct _CLIENT_ID {
+	HANDLE UniqueProcess;
+	HANDLE UniqueThread;
+} CLIENT_ID, *PCLIENT_ID;
+
+typedef ULONG KPRIORITY;
+
+typedef struct _THREAD_BASIC_INFORMATION
+{
+    NTSTATUS ExitStatus;
+    PVOID TebBaseAddress;
+    CLIENT_ID ClientId;
+    KAFFINITY AffinityMask;
+    KPRIORITY Priority;
+    KPRIORITY BasePriority;
+} THREAD_BASIC_INFORMATION, *PTHREAD_BASIC_INFORMATION;
+
 static VALUE
 native_thread_native_thread_id(rb_thread_t *th)
 {
-    DWORD tid = GetThreadId(th->nt->thread_id);
-    if (tid == 0) rb_sys_fail("GetThreadId");
+    THREAD_BASIC_INFORMATION ThreadBasicInfo;
+    LONG Status = NtQueryInformationThread(th->nt->thread_id, 0, &ThreadBasicInfo, sizeof(ThreadBasicInfo), 0);
+    DWORD tid = (DWORD) ThreadBasicInfo.ClientId.UniqueThread;
+    if (Status < 0 || tid == 0) rb_sys_fail("GetThreadId");
     return ULONG2NUM(tid);
 }
 #define USE_NATIVE_THREAD_NATIVE_THREAD_ID 1
