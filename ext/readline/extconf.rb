@@ -31,6 +31,7 @@ dir_config("readline")
 enable_libedit = enable_config("libedit")
 
 have_library("user32", nil) if /cygwin/ === RUBY_PLATFORM
+have_library("Advapi32") if $mswin
 have_library("ncurses", "tgetnum") ||
   have_library("termcap", "tgetnum") ||
   have_library("curses", "tgetnum")

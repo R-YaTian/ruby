@@ -47,6 +47,7 @@ def find_openssl_library
     # required for static OpenSSL libraries
     have_library("gdi32") # OpenSSL <= 1.0.2 (for RAND_screen())
     have_library("crypt32")
+    have_library("Advapi32")
   end
 
   return false unless have_header("openssl/ssl.h")

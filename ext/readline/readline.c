@@ -78,7 +78,7 @@ static ID id_special_prefixes;
 #ifndef HAVE_RL_USERNAME_COMPLETION_FUNCTION
 # define rl_username_completion_function username_completion_function
 #else
-RUBY_EXTERN char *rl_username_completion_function(const char *, int);
+char *rl_username_completion_function(const char *, int);
 #endif
 #ifndef HAVE_RL_COMPLETION_MATCHES
 # define rl_completion_matches completion_matches
@@ -689,7 +689,7 @@ readline_s_insert_text(VALUE self, VALUE str)
 #endif
 
 #if defined(HAVE_RL_DELETE_TEXT)
-RUBY_EXTERN int rl_delete_text(int, int);
+int rl_delete_text(int, int);
 static const char *
 str_subpos(const char *ptr, const char *end, long beg, long *sublen, rb_encoding *enc)
 {
@@ -1147,7 +1147,7 @@ readline_s_get_screen_size(VALUE self)
 #endif
 
 #ifdef HAVE_RL_VI_EDITING_MODE
-RUBY_EXTERN int rl_vi_editing_mode(int, int);
+int rl_vi_editing_mode(int, int);
 /*
  * call-seq:
  *   Readline.vi_editing_mode -> nil
@@ -1186,7 +1186,7 @@ readline_s_vi_editing_mode_p(VALUE self)
 #endif
 
 #ifdef HAVE_RL_EMACS_EDITING_MODE
-RUBY_EXTERN int rl_emacs_editing_mode(int, int);
+int rl_emacs_editing_mode(int, int);
 /*
  * call-seq:
  *   Readline.emacs_editing_mode -> nil
@@ -1671,7 +1671,7 @@ readline_s_get_filename_quote_characters(VALUE self)
 #endif
 
 #ifdef HAVE_RL_REFRESH_LINE
-RUBY_EXTERN int rl_refresh_line(int, int);
+int rl_refresh_line(int, int);
 /*
  * call-seq:
  *   Readline.refresh_line -> nil
@@ -1921,7 +1921,7 @@ username_completion_proc_call(VALUE self, VALUE str)
 RUBY_EXTERN int rl_catch_signals;
 #endif
 #ifdef HAVE_RL_CLEAR_SIGNALS
-RUBY_EXTERN int rl_clear_signals(void);
+int rl_clear_signals(void);
 #endif
 
 #undef rb_intern
