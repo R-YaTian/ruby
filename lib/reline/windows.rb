@@ -140,7 +140,11 @@ class Reline::Windows
   @@GetNumberOfConsoleInputEvents = Win32API.new('kernel32', 'GetNumberOfConsoleInputEvents', ['L', 'P'], 'L')
   @@ReadConsoleInputW = Win32API.new('kernel32', 'ReadConsoleInputW', ['L', 'P', 'L', 'P'], 'L')
   @@GetFileType = Win32API.new('kernel32', 'GetFileType', ['L'], 'L')
+begin
   @@GetFileInformationByHandleEx = Win32API.new('kernel32', 'GetFileInformationByHandleEx', ['L', 'I', 'P', 'L'], 'I')
+rescue LoadError
+  @@GetFileInformationByHandleEx = nil
+end
   @@FillConsoleOutputAttribute = Win32API.new('kernel32', 'FillConsoleOutputAttribute', ['L', 'L', 'L', 'L', 'P'], 'L')
   @@SetConsoleCursorInfo = Win32API.new('kernel32', 'SetConsoleCursorInfo', ['L', 'P'], 'L')
 
@@ -178,6 +182,7 @@ class Reline::Windows
 
     bufsize = 1024
     p_buffer = "\0" * bufsize
+    return false if @@GetFileInformationByHandleEx == nil
     res = @@GetFileInformationByHandleEx.call(io, FILE_NAME_INFO, p_buffer, bufsize - 2)
     return false if res == 0
 
